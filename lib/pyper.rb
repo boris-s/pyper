@@ -158,11 +158,15 @@ module Pyper
   # must read the code to learn about their exact meaning.
   #
   class PostfixMachine
-    PREFIX_CHARACTERS = 'ℓostℒOT'.split( '' ) <<
+    PREFIX_CHARACTERS =
+      ['ℓ'] <<                     # math script ℓ (as in litre)
       '¡' <<                       # inverted exclamation mark
       '¿' <<                       # inverted question mark
       '‹' <<                       # single left pointing quotation mark
-      '›'                          # single right pointing quotation mark
+      '›' <<                       # single right pointing quotation mark
+      '﹦' <<                       # small equals sign
+      '﹕' <<                       # small colon
+      '﹡'                          # small asterisk
     
     SUCC = { alpha: :beta, beta: :alpha, α: :β, β: :α } # successor table
     PRE = { alpha: :beta, beta: :alpha, α: :β, β: :α } # predecessor table
@@ -240,18 +244,18 @@ module Pyper
     
     # PostfixMachine initialization
     def initialize command_ς
-      @cmds = parse_command_ς( command_ς )
+      @cmds = parse_command_string( command_ς )
     end
     
     # Command ς -> command ᴀ
-    def parse_command_ς( arg )
+    def parse_command_string( arg )
       # If supplied arg is an ᴀ, assume that it already is a command
       # sequence, and thus, no work at all is needed:
       return arg if arg.kind_of? Array
       # Otherwise, assume arg is a ς and split it using #each_char
-      arg.to_s.each_char.with_object [] do |char, ᴀ|
+      arg.to_s.each_char.with_object [] do |char, memo|
         # Handle prefix characters:
-        ( PREFIX_CHARACTERS.include?(ᴀ[-1]) ? ᴀ[-1] : ᴀ ) << char
+        ( PREFIX_CHARACTERS.include?(memo[-1]) ? memo[-1] : memo ) << char
       end
     end
     
@@ -292,7 +296,7 @@ module Pyper
       autoclose_open_blocks_and_return
     end
     
-    private
+    # private
     
     # Initialize method writing flags / state keepers
     def initialize_writer_state
@@ -382,6 +386,7 @@ module Pyper
         # pieces implied by these commands. Side effects of this is, that
         # one- and two-character local variables should be avoided inside
         # whole PostfixMachine class.
+        # puts "about to self.send( #@w, #{cmd} )" # DEBUG
         self.send @w, cmd
         pipe_2_variable if @cmds.size <= 0
       end
@@ -477,48 +482,50 @@ module Pyper
       chain "#{s}( #{[x, y, maybe_block].compact.join(", ")} )" end
     # Initiates writing a block method.
     def nullary_m_with_block( str )
-      nullary_m( str ) if @take_block == true
-      # change the writing method
-      @w = :block
-      belay                        # a must before block opening
-      # push a new pipe, head and tail to the writing stack:
-      @rr.empty? ? ( @rr = [@r] ) : ( @rr.push @r ) # store the register
-      @r = :delta # block run in their own unswitchable register delta
-      @pipe << String.new          # push pipe
-      # puts "@pipe is << #@pipe >>"
-      @head <<                     # push head
-        case @block_arity
-        when 0 then [ "#{str} { " ]
-        when 1 then set "delta"; [ "#{str} { |epsilon|" ]
-        when 2 then @argsrc.zeta; @argsrc.ref!
-          set "delta"; [ "#{str} { |epsilon, zeta|" ]
-        when -2 then @argsrc.epsilon; @argsrc.ref!
-          set "delta"; [ "#{str} { |epsilon, zeta|" ]
-        else raise "Unknown @block_arity: #@block_arity"
-        end
-      write "\n"
-      opener = case @block_arity; when 0 then "";
-               when 1, 2 then "delta = epsilon"
-               when -2 then "delta = zeta" end
-      @opener << opener              # push opener
-      @block_arity = 1     # after use, set block arity flag back to default
-      # puts "@pipe is << #@pipe >>"
-      write opener; write "\n"; write @pipe.last
-      finisher = String.new
-      @finisher << finisher                 # push finisher
-      @tail << [ "\n" ]                     # push tail
-      @tail.last << finisher << "\n" << "}" # done
+      # puts "in nullary_m_with_block, str = #{str}" # DEBUG
+      if @take_block == true then
+        nullary_m( str )
+      else            # code a block
+        @w = :block                  # change writing method
+        belay                        # a must before block opening
+        # push a new pipe, head and tail to the writing stack:
+        @rr.empty? ? ( @rr = [@r] ) : ( @rr.push @r ) # store the register
+        @r = :delta # a block runs in its own unswitchable register delta
+        @pipe << String.new          # push pipe
+        # puts "@pipe is << #@pipe >>" # DEBUG
+        @head << case @block_arity   # push head
+                 when 0 then [ "#{str} { " ]
+                 when 1 then set "delta"; [ "#{str} { |epsilon|" ]
+                 when 2 then @argsrc.zeta; @argsrc.ref!
+                   set "delta"; [ "#{str} { |epsilon, zeta|" ]
+                 when -2 then @argsrc.epsilon; @argsrc.ref!
+                   set "delta"; [ "#{str} { |epsilon, zeta|" ]
+                 else raise "Unknown @block_arity: #@block_arity"
+                 end
+        write "\n"
+        opener = case @block_arity; when 0 then "";
+                 when 1, 2 then "delta = epsilon"
+                 when -2 then "delta = zeta" end
+        @opener << opener              # push opener
+        @block_arity = 1     # after use, set block arity flag back to default
+        # puts "@pipe is << #@pipe >>" # DEBUG
+        write opener; write "\n"; write @pipe.last
+        finisher = String.new
+        @finisher << finisher                 # push finisher
+        @tail << [ "\n" ]                     # push tail
+        @tail.last << finisher << "\n" << "}" # done
+      end
     end
     
     # Next block will be written as binary:
     def block_2ary; @block_arity = 2 end
 
     # Next block will be writen as binary with swapped block arguments
-    # (delta = epsilon; @argsrc.zeta):
+    # (delta = zeta; @argsrc.epsilon):
     def block_2ary_swapped; @block_arity = -2 end
     
     # register 0 (alpha) was required for computation
-    def alpha_touch; belay unless @alpha_touched or @beta_touch_touched end
+    def alpha_touch; belay unless @alpha_touched or @beta_touched end
     
     # register 1 (beta) was required for the computation
     def beta_autoinit
@@ -530,7 +537,12 @@ module Pyper
       else raise "wrong @opts[:op] value: #{@opts.op}" end
     end
     alias :beta_touch :beta_autoinit
-    
+
+    # touch and return successor of a register, or @r by default
+    def rSUCC reg=@r; send "#{SUCC[reg]}_touch"; SUCC[reg] end
+
+    # touch and return predecessor of a register, or @r by default
+    def rPRE reg=@r; send "#{PRE[reg]}_touch"; PRE[reg] end
     
     # Traditional letters with extension to the first 3 elements
     # ********************************************************************
@@ -752,48 +764,35 @@ module Pyper
     # statement. Also, these methods cann be invoked only by explicit
     # message passing. This limitation is fine for this particular usecase.)
 
-
-    # #map
+    # Controlling block writing
     # ********************************************************************
-    # Flavors of the all-important map method:
-    
-    # ᴍ – nullary #map opening an unary block (unless this was changed
-    # earlier by an explicit block arity setting command):
-    def ᴍ; nullary_m_with_block "map" end
+    # Certain command characters cause writing a block opening. This block
+    # has certain arity (1 or 2), and is closed either automatically closed
+    # at the end of the command character sequence, or it can be closed
+    # explicitly earlier.
 
-    # M – nullary #map opening a binary block – useful for zipped input
-    def M; block_2ary; nullary_m_with_block "map" end
+    # Next block arity 2 selection
+    def ²; block_2ary end
 
-    # W (looks like inverted M) – nullary #map opening a binary block
-    # with swapped block arguments:
-    def W; block_2ary_swapped; nullary_m_with_block "map" end
+    # Superscript i. Next block will have arity 2 and will be written with
+    # inverse parameter order.
+    def ⁱ; block_2ary_swapped end
 
-
-    # Explicit block closing
-    # ********************************************************************
-    # Certain command characters open a block. This block is either
-    # automatically closed when the sequence of the command characters runs
-    # to the end, or it can be explicitly closed earlier:
-    
-    def _; case @w           # close block when in :block
-           when :block then rslt = close_block; chain rslt
-             @w = :main if @rr.size == 1 unless @rr.empty?
-           else raise "'_' (close block) used when not in block" end
+    # Explicit block closing. 
+    def _
+      case @w           # close block when in :block
+      when :block then
+        chain( close_block )
+        @w = :main if @rr.size == 1 unless @rr.empty?
+      else raise "'_' (close block) used when not in block" end
     end
-
     
     # Controlling the pipes
     # ********************************************************************
     def χ; case @w           # swap registers when in :main
-           when :block
-             raise "'χ' (swap pipes) used when in block"
-           else
-             pipe_2_variable
-             send "#{SUCC[@r]}_touch"
-             exe "#@r, #{SUCC[@r]} = #{SUCC[@r]}, #@r"
-           end
+           when :block then raise "'χ' (swap pipes) used when in block"
+           else exe "#@r, #{rSUCC} = #{rSUCC}, #@r" end
     end
-    
     
     # Controlling the argument source
     # ********************************************************************
@@ -839,7 +838,7 @@ module Pyper
     
     # γ refers to the successor pipe (SUCC[@rr[0]]), but as there are only
     # two pipes, it is always the other pipe.
-    def γ; @argsrc.var SUCC[@rr[0]] end
+    def γ; @argsrc.var rSUCC( @rr[0] ) end
     
     # δ pushes the in-block pipeline delta on the @argsrc stack:
     def δ; @argsrc.delta end
@@ -898,9 +897,91 @@ module Pyper
     # Rho prefixed with inverted exclamation mark resets the @argsrc stack
     # (to size 1, source: args_counted):
     def ¡ρ; @am.std! end
+
+    # Remaining latin letters
+    # ********************************************************************
+    def g; @am.r rSUCC( @rr[0] ) end # arg. source: register (other)
+    def h; set "args" end         # set pipe <- whole args array
+    # i:
+    def j; chain "join" end   # nullary join
+    # k:
+    # l:
+    def m; nullary_m_with_block "map" end # All-important #map method
+    # n:
+    # o: prefix character
+    # p: ? recursive piper method, begin
+    # q: ? recursive piper method, end
+    # r:
+    # s: prefix character
+    # t: prefix character
+
+    # Latin capital letters
+    # ********************************************************************
+    def A; pipe_2_variable; start "Array(#@r)" end # Array( pipe )
+    def B; @take_block = true unless @take_block == :taken end # eat block
+    def C; paren end # explicit parenthesize
+    def D; exe "#@r = #@r.dup" end # self.dup
+    def E; exe "#{rSUCC} = #@r.dup" end # -> g
+    # L
+    def H; pipe_2_variable; start "Hash[#@r.zip(#{rSUCC})]" end
+    def J; unary_m "join" end        # binary join
+    # L:
+    def M # Map zipped this and other register using binary block
+      block_2ary
+      pipe_2_variable
+      start "#@r.zip(#{rSUCC})"
+      nullary_m_with_block "map"
+    end
+    # M: occupied by map with binary block
     
+    # N:
+    # O: prefix character (ready to append literal)
+    # P: recursive piper method, begin
+    # Q: recursive piper method, end
+    def R # Reverse zip: Zip other and this register
+      pipe_2_variable
+      start "#{rSUCC}.zip(#@a)"
+    end
+    # S:
+    # T: prefix character
+    def U; end                     # unsh/prep self 2 reg (other changed)
+    def V; end                     # <</app self 2 reg (other changed)
+    def W # Map zipped other and this register using binary block
+      block_2ary                     # Mnemonic: W is inverted M
+      pipe_2_variable
+      start "#{rSUCC}.zip(#@r)"
+      nullary_m_with_block "map"
+    end
+
+    # W: occupied by map with reverse order binary block
+    # X:
+    # Y:
+    def Z # Zip this and other register
+      pipe_2_variable
+      start "#@r.zip(#{rSUCC})"
+    end
+
+    # Remaining Greek letters
+    # ********************************************************************
+    def ς; nullary_m "to_s" end
+
+    # Small caps
+    # ********************************************************************
+    def ᴇ; bin_op "==" end # equal
+    def ɪ; bin_op "||" end # memo: v is log. or
+    def ᴊ; unary_m "join" end
+    def ᴍ
+      exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
+      unary_m "join"
+      exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
+    end
+    def ᴘ # make a pair
+      pipe_2_variable
+      arg = grab_arg
+      start "[#@r, #{arg}]"
+    end
     
-    # Ternary operator:
+    # Ternary operator
     # ********************************************************************
     # Guards in Pyper methods are provided by ( * ? * : * ) operator, using
     # the following command characters:
@@ -915,30 +996,20 @@ module Pyper
     def ⁈; @pipe[-1] << " ? ( #{grab_arg} ) : " end
     # Right part from colon (included) on as unary method:
     def ⁉; @pipe[-1] << " : ( #{grab_arg} )" end # ternary op. r. part
+
+    # Other special character methods
+    # ********************************************************************
     
-    def g; @am.r SUCC[@rr[0]] end # arg. source: register (other)
-    def h; set "args" end         # set pipe <- whole args array
-    def i; bin_op '==' end    # equals: binary == (is)
-    def j; chain "join" end   # nullary join
-    # k:
-    # l:
-    # m:
-    # n:
-    # o: prefix character
-    # p: ? recursive piper method, begin
-    # q: ? recursive piper method, end
-    # r:
-    # s: prefix character
-    # t: prefix character
+    def ß; nullary_m "to_sym" end
 
     # Adaptive prepend:
     def →
-      pipe_2_variable; g = grab_arg; start "#@r =\n" + # arg 2 self
-        "if #@r.respond_to?( :unshift ) then #@r.unshift(#{x})\n" +
-        "elsif #@r.respond_to?( :prepend ) then #@r.prepend(#{x})\n" +
+      pipe_2_variable; arg = grab_arg; start "#@r =\n" + # arg 2 self
+        "if #@r.respond_to?( :unshift ) then #@r.unshift(#{arg})\n" +
+        "elsif #@r.respond_to?( :prepend ) then #@r.prepend(#{arg})\n" +
         "elsif #@r.respond_to?( :merge ) and #@r.is_a?( Array ) " +
-        "&& #@r.size == 2\nHash[*#@r].merge(#{x})\n" +
-        "elsif #@r.respond_to? :merge then #@r.merge(#{x})\n" +
+        "&& #@r.size == 2\nHash[*#@r].merge(#{arg})\n" +
+        "elsif #@r.respond_to? :merge then #@r.merge(#{arg})\n" +
         "else raise 'impossible to unshift/prepend' end"
       start
     end
@@ -946,129 +1017,98 @@ module Pyper
     # Adaptive append:
     def ←
       pipe_2_variable
-      g = grab_arg
+      arg = grab_arg
       start "#@r =\n" +   # arg 2 self
-        "if #@r.respond_to?( :<< ) then #@r << #{x}\n" +
+        "if #@r.respond_to?( :<< ) then #@r << #{arg}\n" +
         "elsif #@r.respond_to?( :merge ) and #@r.is_a?(Array) " +
-        "&& #@r.size == 2\n#{x}.merge(Hash[*#@x])\n" +
-        "elsif #@r.respond_to?( :merge ) then #{x}.merge(#@r)\n" +
+        "&& #@r.size == 2\n#{arg}.merge(Hash[*#@r])\n" +
+        "elsif #@r.respond_to?( :merge ) then #{arg}.merge(#@r)\n" +
         "else raise 'impossible to <</append' end"
       start
     end
     #               unsh. r to self,        << r to self
     # And eight more with Array construct [a, b]
     # def w; @am.args! end      # arg. source = whole args array (shift! on)
-    # def x; pipe_2_variable; start( "#{SUCC[@r]}.zip(#@r)" ) # zip other w. this
-    #   send "#{SUCC[@r]}_touch" end
-    
-    # Dotted box ⬚ means enclose unconditionally in an array:
-    def ⬚; pipe_2_variable; start "[#@r]" end
-    # (Mnemonic: [])
+    # def x; pipe_2_variable; start( "#{rSUCC}.zip(#@r)" ) # zip other w. this
     
     def «; set grab_arg end           # grab argument into the current pipe
-    def »; exe "args.unshift #@r" end # args.unshift
-    
+    def »; exe "args.unshift #@r" end # args.unshift from current pipe
+    def ¡«                            # grab argument into the other pipe
+      exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
+      set grab_arg
+      exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
+    end
+    def ¡»; exe "args.unshift #{rSUCC}" end # args.unshift from the other pipe
     
     def ¿i; unary_m "include?" end
     def ●; nullary_m "compact" end # ji3 - compact
-    
-    def A; pipe_2_variable; start "Array(#@r)" end # Array( pipe )
-    def C; paren end # explicit parenthesize
-    def D; exe "#@r = #@r.dup" end # self.dup
-    def E; exe "#{SUCC[@r]} = #@r.dup" end # -> g
-    def F; block_2ary end # next block arity <- 2 (memo: |e, f|)
-    def G; @am.r @r end              # arg. source: register (this)
-    def H; end                       # do with both pipes
-    def J; unary_m "join" end        # binary join
-    def K; @take_block = true unless @take_block == :taken end # eat block
-    # L:
-    
-    def N; exe "args.unshift #@r" end # args.unshift
-    # O: prefix character (ready to append literal)
-    # P: recursive piper method, begin
-    # Q: recursive piper method, end
-    # R:
-    def S; pipe_2_variable; start "String(#@r)" end # String( pipe )
-    # T: prefix character
-    def U; end                     # unsh/prep self 2 reg (other changed)
-    def V; end                     # <</app self 2 reg (other changed)
-    def W; @arg_count -= 1 end     # take the same arg position again
-    # X:
-    # Y:
-    def Z; unary_m "zip" end       # binary zip
-    
+
     # Unary operators
-    def ‹⊕; unary_op "+" end       # unary + as +@ nullary postfix method
-    def ‹⊖; unary_op "-" end       # unary - as -@ nullary postfix method
-    def ⩪; unary_op "~" end        # unary ~
-    def ‼; unary_op "not" end      # unary not
-    def ﹗; unary_op "!" end        # unary !
+    # ********************************************************************
+    def ‹₊; unary_op "+" end       # subscript +, +@ method
+    def ‹₋; unary_op "-" end       # subscript -, -@ method
+    def ‹n; unary_op "not" end     # double exclamation mark, not operator
+    def ‹﹗; unary_op "!" end       # small exclamation mark, !@ method
     
-    def ⊕; bin_op "+" end          # binary + as +() unary method
-    def ⊖; bin_op "-" end          # binary - as -() unary method
-    def ★; bin_op "*" end          # binary * as *() unary method
-    def ÷; bin_op "/" end          # binary / as /() unary method
-    def ↑; bin_op "**" end         # binary ** as **() unary method
-    def ⁒; bin_op "%" end         # binary % as %() unary method
+    def ₊; bin_op "+" end            # binary + as +() unary method
+    def ₋; bin_op "-" end            # binary - as -() unary method
+    def ★; bin_op "*" end            # binary * as *() unary method
+    def ÷; bin_op "/" end            # binary / as /() unary method
+    def ﹡﹡; bin_op "**" end           # binary ** as **() unary method
+    def ﹪; bin_op "%" end            # binary % as %() unary method
     
-    def oe; @pipe[-1] << " == " end # binary == waiting for literal
-    def of; bin_op "<" end # memo: keyb., before g
-    def og; bin_op ">" end # memo: keyb., greater
-    def oh; bin_op "<=" end # memo: keyb., aft. f/g
-    def oi; bin_op ">=" end # memo: keyb., aft. f/g
-    # oj:
-    def ok; bin_op "&" end # memo: ampersand resembles k
-    def oo; set grab_arg end # grab arg into register
-    def op; unary_op "+" end # unary +
-    def oq; @pipe[-1] << "[#{grab_arg}]" end # []
-    def or; @pipe[-1] << "[#{grab_arg}] = #{grab_arg}" end # []=
-    def os; bin_op "-" end # subtraction: binary -
-    def ot; bin_op "**" end # power ("to")
-    def ou; bin_op "|" end # memo: Fr. ou
-    def ov; bin_op "^" end # memo: v upside down
-    def ow; bin_op "||" end # memo: v is log. or
-    def ox; bin_op "&&" end # memo: x is log. mult.
-    def oy; bin_op ">>" end # mnemonic: precedes <<
-    def oz; bin_op '<<' end # mnemonic: z is last
-    
-    
+    def ﹤; bin_op "<" end
+    def ﹥; bin_op ">" end
+    def ≤; bin_op "<=" end
+    def ≥; bin_op ">=" end
+      
+    def ﹫; @pipe[-1] << "[#{grab_arg}]" end # []
+    def ﹦﹫; @pipe[-1] << "[#{grab_arg}] = #{grab_arg}" end # []=
+    def ﹠; bin_op "&&" end # memo: x is log. mult.
+    def ››; bin_op ">>" end # mnemonic: precedes <<
+    def ‹‹; bin_op '<<' end # mnemonic: z is last
+
     # Misc
+    # ********************************************************************
     
-    def ru; end                    # unsh/prep reg 2 self (this changed)
-    def rv; end                    # <</app reg 2 self (this changed)
-    def rU; end                    # unsh/prep reg 2 self (other changed)
-    def rV; end                    # <</app reg 2 self (other changed)
+    # def ru; end                    # unsh/prep reg 2 self (this changed)
+    # def rv; end                    # <</app reg 2 self (this changed)
+    # def rU; end                    # unsh/prep reg 2 self (other changed)
+    # def rV; end                    # <</app reg 2 self (other changed)
     
     
-    def sj; unary_m "join" end
     
-    def st; nullary_m "to_s" end
-    def su; end                    # unsh/prep self 2 arg
-    def sv; end                    # <</app self 2 arg
+    # def su; end                    # unsh/prep self 2 arg
+    # def sv; end                    # <</app self 2 arg
     
-    def sy; nullary_m "to_sym" end
+    # def sy; nullary_m "to_sym" end
     
-    # sA: ? prependmap other, this, switch to other
-    # sB: ? appendmap other, this, switch to other
+    # # sA: ? prependmap other, this, switch to other
+    # # sB: ? appendmap other, this, switch to other
     
-    def sU; end                    # 
-    def sV; end
+    # def sU; end                    # 
+    # def sV; end
     
-    def ti; nullary_m "to_i" end
+    def ›i; nullary_m "to_i" end
+    def ›A; pipe_2_variable; start "[#@r]" end # make a singleton array
+
     
     # Appending literals
     
-    def ℓn; @pipe[-1] << "nil" end # nil literal
-    def ℓς; @pipe[-1] << '' end    # empty string literal
-    def ℓᴀ; @pipe[-1] << '[]' end  # empty array literal
-    def ℓꜧ; @pipe[-1] << '{}' end  # empty hash literal
+    def ﹕n; @pipe[-1] << "nil" end # nil literal
+    def ﹕ς; @pipe[-1] << '' end    # empty string literal
+    def ﹕ᴀ; @pipe[-1] << '[]' end  # empty array literal
+    def ﹕ʜ; @pipe[-1] << '{}' end  # empty hash literal
     
-    def ℓ⊕; @pipe[-1] << ' + ' end # literal + waiting for another literal
-    def ℓ⊖; @pipe[-1] << ' - ' end # literal - waiting for another literal
-    def ℓ★; @pipe[-1] << ' * ' end # literal * waiting for another literal
-    def ℓ÷; @pipe[-1] << ' / ' end # literal / waiting for another literal
-    def ℓ↑; @pipe[-1] << ' ** ' end # literal ** waiting for a literal
-    def ℓ⁒; @pipe[-1] << ' % ' end # literal % waiting for another literal
+    def ﹕₊; @pipe[-1] << ' + ' end # literal + waiting for another literal
+    def ﹕₋; @pipe[-1] << ' - ' end # literal - waiting for another literal
+    def ﹕★; @pipe[-1] << ' * ' end # literal * waiting for another literal
+    def ﹕÷; @pipe[-1] << ' / ' end # literal / waiting for another literal
+    def ﹕﹪; @pipe[-1] << ' % ' end # literal % waiting for another literal
+    def ﹦﹦; @pipe[-1] << ' == ' end # literal == waiting for another literal
+    def ﹕﹤; @pipe[-1] << ' < ' end  # literal < waiting for another literal
+    def ﹕«; @pipe[-1] << ' << ' end  # literal << waiting for another literal
+    def ﹕»; @pipe[-1] << ' >> ' end  # literal >> waiting for another literal
 
     # Digit literals
     def ₀; @pipe[-1] << "0" end
