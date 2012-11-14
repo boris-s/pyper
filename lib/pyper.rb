@@ -970,9 +970,9 @@ module Pyper
     def ᴇ; bin_op "==" end # equal
     def ɪ; bin_op "||" end # memo: v is log. or
     def ᴊ; unary_m "join" end
-    def ᴍ
+    def ᴍ # Map in the other pipe
       exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
-      unary_m "join"
+      nullary_m_with_block "map"
       exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
     end
     def ᴘ # make a pair
