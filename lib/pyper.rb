@@ -398,8 +398,8 @@ module Pyper
     # each block it closes, so this method actually returns the program
     # string of whole newly written Pyper method.
     def autoclose_open_blocks_and_return
-      loop { ( rslt = close_block; chain rslt; pipe_2_variable) if @head.size > 1
-        return close_block }
+      ( rslt = close_block; chain rslt; pipe_2_variable ) while @head.size > 1
+      return close_block
     end
     
     # Called to close a block, including the main def
@@ -861,7 +861,7 @@ module Pyper
     
     # When inverted exclamation mark '¡' is used a prefix to the source
     # selector, then rather then being pushed on the @argsrc stack, the new
-    # argument source replaces the topmost element of the stak. When the
+    # argument source replaces the topmost element of the stack. When the
     # stack size is 1, this has the additional effect of setting the given
     # argument source as default, until another such change happens, or
     # stack reset is invoked.

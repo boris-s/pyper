@@ -3,8 +3,8 @@
 
 require 'test/unit'
 require 'shoulda'
-# require_relative './../lib/pyper'
-require 'pyper'
+require_relative './../lib/pyper'
+# require 'pyper'
 
 include Pyper
 
@@ -101,5 +101,9 @@ class YPiperTest < ::Test::Unit::TestCase
     a, b = [Object.new, Object.new].each { |o| o.define_singleton_method :xxx do "xxx" end }
     hsh = { a => "xxx", b => "xxx" }
     assert_equal hsh, [a, b].τBmχHτ( &:xxx )
+    assert_equal [:x], 'x'.τABmτ( &:to_sym )
+    assert_equal ['x'], ['x'].τmß_mςτ
+    assert_equal [[['y']]], [[[:y]]].τmmmςτ
+    assert_equal [[:x, :y], [:v, :w]], [[?x, ?y], [?v, ?w]].τmmßτ
   end
 end # class
