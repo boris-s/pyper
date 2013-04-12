@@ -3,8 +3,8 @@
 
 require 'test/unit'
 require 'shoulda'
-require_relative './../lib/pyper'
-# require 'pyper'
+# require_relative './../lib/pyper'
+require 'pyper'
 
 include Pyper
 
