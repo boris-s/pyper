@@ -2,7 +2,8 @@
 
 require "pyper/version"
 
-# Piper is an extension of the Lispy car/cdr idea.
+# Pyper is an extension of the Lispy car/cdr idea.
+# 
 module Pyper
   
   # Everybody knows Lispy functions #car, #cdr. In Ruby, these functions
