@@ -3,8 +3,8 @@
 
 require 'test/unit'
 require 'shoulda'
-# require_relative './../lib/pyper'
-require 'pyper'
+require_relative './../lib/pyper'
+# require 'pyper'
 
 include Pyper
 
@@ -105,5 +105,9 @@ class YPiperTest < ::Test::Unit::TestCase
     assert_equal ['x'], ['x'].τmß_mςτ
     assert_equal [[['y']]], [[[:y]]].τmmmςτ
     assert_equal [[:x, :y], [:v, :w]], [[?x, ?y], [?v, ?w]].τmmßτ
+    
+    assert_equal [1, 1, 1], "abc".τm∅₁τ
+    require 'y_support/all'
+    assert_equal [], ( 0...31 ).τm«_M﹪_mτ( "%05b", &[:τmᴇ⁇τ, ?0, ?+,  ?,] ).τm→ι←Jτ( '', "[%s]" )
   end
 end # class

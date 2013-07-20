@@ -117,7 +117,7 @@ module Pyper
       mτ_string.gsub! /^alpha\nalpha\n/, "alpha\n"     # workaround
       mτ_string.gsub! /^alpha\nalpha =/, "alpha ="     # workaround
       mτ_string.gsub! /^alpha = alpha =/, 'alpha ='    # workaround
-      # puts mτ_string # DEBUG
+      puts mτ_string # DEBUG
       self.class.module_eval( mτ_string )
       send( mτ_sym, *args, &block )
     }
@@ -827,39 +827,39 @@ module Pyper
     #
     # Greek characters corresponding to the internal variable names of the
     # Pyper method are used to manipulate the argument source stack:
-    
+
     # α pushes the primary pipeline (0) on the @argsrc stack:
     def α; @argsrc.alpha end
     # (Remark: Current pipe name is at the bottom of the @rr pipe stack)
-    
+
     # β pushes the secondary pipeline (1) on the @argsrc stack:
     def β; @argsrc.beta end
     # (Remark: SUCC hash tells us what the other pipe is, based on the
     # current pipe name, seen on the *bottom* of the pipe stack @rr)
-    
+
     # γ refers to the successor pipe (SUCC[@rr[0]]), but as there are only
     # two pipes, it is always the other pipe.
     def γ; @argsrc.var rSUCC( @rr[0] ) end
-    
+
     # δ pushes the in-block pipeline delta on the @argsrc stack:
     def δ; @argsrc.delta end
-    
+
     # ε, ζ push block arguments epsilon, resp. zeta on the @argsrc stack:
     def ε; @argsrc.epsilon end
     def ζ; @argsrc.zeta end
-    
+
     # ψ and ω respectively refer to the penultimate and last args element:
     def ψ; @argsrc.psi end
     def ω; @argsrc.omega end
-    
+
     # Lambda pushes onto the argument stack the default argument source, which
     # is the argument list indexed with write-time @arg_count index:
     def λ; @argsrc.args_counted end
-    
+
     # Capital omega pushes onto the argument stack whole 'args' variable
     # (whole argument list), with 'shift' mode turned on by default:
     def Ω; @argsrc.args end
-    
+
     # When inverted exclamation mark '¡' is used a prefix to the source
     # selector, then rather then being pushed on the @argsrc stack, the new
     # argument source replaces the topmost element of the stack. When the
@@ -876,20 +876,20 @@ module Pyper
     def ¡ω; @argsrc.omega! end
     def ¡λ; @argsrc.args_counted! end
     def ¡Ω; @argsrc.args! end
-    
+
     # Small pi sets the 'dup' grab mode for the top @argsrc element:
-    def π; @argsrc.shift! end
+    def π; @argsrc.dup! end
 
     # Small sigma sets the 'shift' grab mode for the top @argsrc element:
     def σ; @argsrc.shift! end
-    
+
     # Small pi prefixed with inverted exclamation mark sets the 'ref'
     # (default) grab mode for the top@argsrc element (naturally, turning off
     # 'shift' or 'dup' mode).
     def ¡π; @argsrc.ref! end
     # Same for small sigma prefixed with inverted exclamation mark:
     alias :¡σ :¡π
-    
+
     # Iota decrements the @arg_count index. If iota is used once, it causes
     # that same argument is used twice. If iota is used repeatedly, pointer
     # goes further back in the arg. ᴀ.
@@ -907,7 +907,16 @@ module Pyper
     def j; chain "join" end   # nullary join
     # k:
     # l:
-    def m; nullary_m_with_block "map" end # All-important #map method
+    # def m; nullary_m_with_block "map" end # All-important #map method
+
+    # '9' - [-1st] (ie. an array with only the last collection element)
+    def m
+      pipe_2_variable
+      start "if #@r.is_a? String then #@r = #@r.each_char end\n"
+      start
+      nullary_m_with_block "map"
+    end
+
     # n:
     # o: prefix character
     # p: ? recursive piper method, begin
@@ -919,6 +928,7 @@ module Pyper
     # Latin capital letters
     # ********************************************************************
     def A; pipe_2_variable; start "Array(#@r)" end # Array( pipe )
+    alias Α A # Greek Α, looks the same, different char
     def B; @take_block = true unless @take_block == :taken end # eat block
     def C; paren end # explicit parenthesize
     def D; exe "#@r = #@r.dup" end # self.dup
