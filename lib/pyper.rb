@@ -204,6 +204,14 @@ module Enumerable
   include Pyper
 end
 
+class Array
+  include Pyper
+end
+
+class Hash
+  include Pyper
+end
+
 class String
   include Pyper
 
