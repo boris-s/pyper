@@ -77,7 +77,7 @@ module Pyper::ControlCharacters
   # 
   def s
     pipe_2_variable
-    start "#@r.send( *({grab_arg}) )"
+    start "#@r.send( *(#{grab_arg}) )"
   end
 
   # t: prefix character
