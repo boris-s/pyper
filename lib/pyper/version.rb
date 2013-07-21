@@ -1,4 +1,4 @@
 module Pyper
-  VERSION = "1.0.1"
-  DEBUG = false
+  VERSION = "2.0.0"
+  DEBUG = 0 # debug level
 end

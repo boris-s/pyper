@@ -8,7 +8,7 @@ require_relative './../lib/pyper'
 
 include Pyper
 
-class YPiperTest < ::Test::Unit::TestCase
+class PyperTest < ::Test::Unit::TestCase
   should "define basic methods" do
 
     assert_equal 1, [1, 2, 3].car
@@ -25,7 +25,7 @@ class YPiperTest < ::Test::Unit::TestCase
     assert_equal [*(4..10)], [*(1..10)].τfτ
     
     assert_equal [:a, :b, :c], [[:a, 1], [:b, 2], [:c, 3]].τmaτ
-    assert_equal ["a", "b", "c"], [[:a, 1], [:b, 2], [:c, 3]].τmaςτ
+    assert_equal ["a", "b", "c"], [[:a, 1], [:b, 2], [:c, 3]].τmatsτ
     
     assert_equal [*(1..7)], [*(1..10)].τuτ
     assert_equal [*(1..8)], [*(1..10)].τvτ
@@ -36,24 +36,24 @@ class YPiperTest < ::Test::Unit::TestCase
 
 
     assert_equal 7, 7.τCτ
-    assert_equal 7, 7.τχτ( 8 )
+    assert_equal 7, 7.τXτ( 8 )
     assert_equal 8, [7, 8].χCτ
-    assert_equal 8, 7.τ«τ( 8 )
+    assert_equal 8, 7.τgτ( 8 )
     
-    assert_equal [0, 1, 6, 9], [:x.τ∅₀τ, 0.τ∅₁τ, Object.new.τ∅₆τ, "a".τ∅₉τ]
+    assert_equal [0, 1, 6, 9], [:x.τl0τ, 0.τl1τ, Object.new.τl6τ, "a".τl9τ]
     
     assert_equal [:hello], :hello.τAτ
     assert_equal [[:a, 1], [:b, 2]], ( {a: 1, b: 2}.τAτ )
     assert_equal [1, 2], [1, 2].τAτ
     
-    assert_equal 1, "+1.000000".τ›iτ
-    assert_equal "hello", [:h, ?e, :l, :l, :o].τjτ
+    assert_equal 1, "+1.000000".τtftiτ
+    assert_equal "hello", [:h, ?e, :l, :l, :o].τijτ
     
-    assert_equal "la", :la.τςτ
+    assert_equal "la", :la.τtsτ
     
-    assert_equal :hello, "hello".τßτ
+    assert_equal :hello, "hello".τtSτ
 
-    assert_equal [[1, 2]], [1, 2].τ›Aτ
+    assert_equal [[1, 2]], [1, 2].τtAτ
 
     assert_equal [1], [*(1..10)].τ0τ
     assert_equal [1, 2], [*(1..10)].τ1τ
@@ -71,52 +71,52 @@ class YPiperTest < ::Test::Unit::TestCase
 
     assert_equal 7, 4.τ₊τ( 3 )
     assert_equal 15, 3.τ★τ( 5 )
-    assert_equal 2, 17.τ﹪τ( 5 )
+    assert_equal 2, 17.τoMτ( 5 )
     assert_equal 17 / 5, 17.τ÷τ( 5 )
-    assert_equal true, 7.τᴇτ( 7 )
+    assert_equal true, 7.τEτ( 7 )
     assert_equal [true, false, false], [-1, 0, 1].τm﹤τ( 0, 0, 0 )
     assert_equal [false, false, true], [-1, 0, 1].τm﹥τ( 0, 0, 0 )
-    assert_equal [true, true, false], [-1, 0, 1].τm≤τ( 0, 0, 0 )
-    assert_equal [false, true, true], [-1, 0, 1].τm≥τ( 0, 0, 0 )
-    assert_equal [5, 10, 15], (1..3).τm★τ( 5 )
-    assert_equal [1, 4, 9], [*(1..3)].τ»Dσm★τ
-    assert_equal [1, 4, 9], (1..3).τm﹡﹡τ( 2 )
-    assert_equal [1, 4, 9], (1..3).τM★τ
-    assert_equal [?a, nil, ?a, nil], (1..4).τm﹪ᴇτ( 2, 1 ).τm⁇τ( ?a, nil )
-    assert_equal ["a", nil, "a", nil], (1..4).τm﹪ᴇ⁇τ( 2, 1, ?a, nil )
-    assert_equal [nil, "b", "b", nil], nil.τ«mᴇ⁇τ( [0, 1, 1, 0], 1, ?b, nil )
+    assert_equal [true, true, false], [-1, 0, 1].τmιSτ( 0, 0, 0 )
+    assert_equal [false, true, true], [-1, 0, 1].τmιGτ( 0, 0, 0 )
+    assert_equal [5, 10, 15], (1..3).τmomτ( 5 )
+    assert_equal [1, 4, 9], [*(1..3)].τGDσmomτ
+    assert_equal [1, 4, 9], (1..3).τmopτ( 2 )
+    assert_equal [1, 4, 9], (1..3).τMomτ
+    assert_equal [?a, nil, ?a, nil], (1..4).τmoMEτ( 2, 1 ).τmTτ( ?a, nil )
+    assert_equal ["a", nil, "a", nil], (1..4).τmoMETτ( 2, 1, ?a, nil )
+    assert_equal [nil, "b", "b", nil], nil.τgmETτ( [0, 1, 1, 0], 1, ?b, nil )
     assert_equal [["a", nil], [nil, "b"], ["a", "b"], [nil, nil]],
-                 (1..4).τm﹪ᴇ⁇χ( 2, 1, ?a, nil ).π«mᴇ⁇π( [0, 1, 1, 0], 1, ?b, nil ).χγZτ
-    assert_equal true, [:a, :b, :c].τ¿iτ( :b )
-    assert_equal( [[:c], [:a]], [[:b, :c, :d], [:a, :b, :d]].
-                  χ»βm«ε¿i‹﹗ε⁈﹕n_●χm«ε¿i‹﹗ε⁈﹕n_●π )
+                 (1..4).τmoMETχ( 2, 1, ?a, nil ).πgmETπ( [0, 1, 1, 0], 1, ?b, nil ).χrZτ
+    assert_equal true, [:a, :b, :c].τoiτ( :b )
+    assert_equal [[:c], [:a]], [[:b, :c, :d], [:a, :b, :d]].πβoIXo8γosmAτ
+                  # χGβmgεoiiEεT_iCχmgεoiiEεT_π( nil, nil ) )
     assert_equal( "d yada yada, a, c blah blah",
                   "%s yada yada, %s blah blah" %
-                  [[:d], [:a, :c]].χJχJπ( ", " ) )
-    assert_equal "fizzbuzz", (1..100).τm﹪ᴇ⁇χ( 3, 0, "fizz", nil ).πm﹪ᴇ⁇χ( 5, 0, "buzz", nil ).πZmjτ[14]
+                  [[:d], [:a, :c]].χJXJπ( ", " ) )
+    assert_equal "foobar", (1..100).τmoMETχ( 3, 0, "foo", nil ).πmoMETχ( 5, 0, "bar", nil ).πZmijτ[14]
     assert_equal ["ax", "bx"], ["a", "b"].τmτ { |o| o + "x" }
     assert_equal ["ax", "bx"], ["a", "b"].τBmτ { |o| o + "x" }
-    assert_equal [-1, -2], [[1, 1], [2, 3]].πM₋τ
-    assert_equal [1, 2], [[1, 1], [2, 3]].πW₋τ
+    assert_equal [-1, -2], [[1, 1], [2, 3]].πMosτ
+    assert_equal [1, 2], [[1, 1], [2, 3]].πWosτ
     a, b = [Object.new, Object.new].each { |o| o.define_singleton_method :xxx do "xxx" end }
     hsh = { a => "xxx", b => "xxx" }
-    assert_equal hsh, [a, b].τBmχHτ( &:xxx )
+    assert_equal hsh, [a, b].τBmXthτ( &:xxx )
     assert_equal [:x], 'x'.τABmτ( &:to_sym )
-    assert_equal ['x'], ['x'].τmß_mςτ
-    assert_equal [[['y']]], [[[:y]]].τmmmςτ
-    assert_equal [[:x, :y], [:v, :w]], [[?x, ?y], [?v, ?w]].τmmßτ
+    assert_equal ['x'], ['x'].τmtS_mtsτ
+    assert_equal [[['y']]], [[[:y]]].τmmmtsτ
+    assert_equal [[:x, :y], [:v, :w]], [[?x, ?y], [?v, ?w]].τmmtSτ
     
-    assert_equal [1, 1, 1], "abc".τm∅₁τ
+    assert_equal [1, 1, 1], "abc".τml1τ
     require 'y_support/all'
     @a = ["a", "b", "c"]
-    exp = [[["a"], ["b"], ["c"]],
-           [["a", "b"], ["c"]],
-           [["a"], ["b", "c"]],
-           [["a", "b", "c"]]]
-    rslt = ( 0...2**( @a.size - 1 ) )
-      .τm«_M﹪_mτ( "%0#{@a.size - 1}b", &[:τmᴇ⁇τ, ?0, ?+,  ?,] )
-      .τm→ι←J_m﹪τ( '', "[@a[%s]]", [*0...@a.size] )
-      .τm→←_mτ( '[', ']', &method( :eval ) )
+    exp = [ [["a"], ["b"], ["c"]],
+            [["a", "b"], ["c"]],
+            [["a"], ["b", "c"]],
+            [["a", "b", "c"]] ]
+    n = @a.size - 1
+    rslt = ( 0 ... 2 ** n ).τmg_MoM_mτ( "%0#{n}b", &[:τmETτ, ?0, ?+,  ?,] )
+      .τmpjqJ_moMτ( '', "[@a[%s]]", [ * 0 .. n ] )
+      .τmpq_mτ( '[', ']', & method( :eval ) )
     assert_equal exp.sort, rslt.sort
   end
-end # class
+end # class PyperTest
