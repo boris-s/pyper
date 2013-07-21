@@ -108,6 +108,15 @@ class YPiperTest < ::Test::Unit::TestCase
     
     assert_equal [1, 1, 1], "abc".τm∅₁τ
     require 'y_support/all'
-    assert_equal [], ( 0...31 ).τm«_M﹪_mτ( "%05b", &[:τmᴇ⁇τ, ?0, ?+,  ?,] ).τm→ι←J_m﹪τ( '', "[a[%s]]", [*0..5] ).τm→←_mτ( '[', ']', &method( :eval ) )
+    @a = ["a", "b", "c"]
+    exp = [[["a"], ["b"], ["c"]],
+           [["a", "b"], ["c"]],
+           [["a"], ["b", "c"]],
+           [["a", "b", "c"]]]
+    rslt = ( 0...2**( @a.size - 1 ) )
+      .τm«_M﹪_mτ( "%0#{@a.size - 1}b", &[:τmᴇ⁇τ, ?0, ?+,  ?,] )
+      .τm→ι←J_m﹪τ( '', "[@a[%s]]", [*0...@a.size] )
+      .τm→←_mτ( '[', ']', &method( :eval ) )
+    assert_equal exp.sort, rslt.sort
   end
 end # class

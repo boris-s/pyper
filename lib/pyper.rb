@@ -5,7 +5,6 @@ require "pyper/version"
 # Pyper is an extension of the Lispy car/cdr idea.
 # 
 module Pyper
-  
   # Everybody knows Lispy functions #car, #cdr. In Ruby, these functions
   # can be defined for example as:
   def car; first end                                 # a: first
@@ -117,11 +116,11 @@ module Pyper
       mτ_string.gsub! /^alpha\nalpha\n/, "alpha\n"     # workaround
       mτ_string.gsub! /^alpha\nalpha =/, "alpha ="     # workaround
       mτ_string.gsub! /^alpha = alpha =/, 'alpha ='    # workaround
-      puts mτ_string # DEBUG
+      puts mτ_string if Pyper::DEBUG
       self.class.module_eval( mτ_string )
       send( mτ_sym, *args, &block )
     }
-    # puts "received msg #{mτ_sym}" # DEBUG
+    puts "received msg #{mτ_sym}" if Pyper::DEBUG
     case mτ_sym.to_s
     when /^τ(.+)τ$/ then pyperλ.( op: 1, ret: 1 )
     when /^π(.+)τ$/ then pyperλ.( op: 2, ret: 1 )
