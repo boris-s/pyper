@@ -2,6 +2,7 @@
 
 require_relative 'pyper/version'
 require_relative 'pyper/postfix_machine'
+require_relative 'pyper/default_includes'
 
 # Pyper is an extension of the Lispy car/cdr idea.
 # 
@@ -192,33 +193,7 @@ module Pyper
   end
 end # module Pyper
 
-class Object
-  def π
-    tap do |o|
-      begin
-        o.singleton_class
-      rescue TypeError
-        o.class
-      end.class_exec { include Pyper }
-    end
-  end
-end
-
-module Enumerable
-  include Pyper
-end
-
-class Array
-  include Pyper
-end
-
-class Hash
-  include Pyper
-end
-
 class String
-  include Pyper
-
   # Annoying little detail.
   # 
   alias starts_with? start_with?

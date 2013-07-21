@@ -73,9 +73,14 @@ module Pyper::ControlCharacters
     @argsrc.beta
   end
 
-  # s: prefix character
-  # t: prefix character
+  # Sends the argument from the argument source to the current pipeline.
+  # 
+  def s
+    pipe_2_variable
+    start "#@r.send( *({grab_arg}) )"
+  end
 
+  # t: prefix character
   
   # Latin capital letters
   # ********************************************************************

@@ -6,8 +6,6 @@ require 'shoulda'
 require_relative './../lib/pyper'
 # require 'pyper'
 
-include Pyper
-
 class PyperTest < ::Test::Unit::TestCase
   should "define basic methods" do
 
@@ -35,14 +33,14 @@ class PyperTest < ::Test::Unit::TestCase
     assert_equal 10, [*(1..10)].τzτ
 
 
-    assert_equal 7, 7.τCτ
-    assert_equal 7, 7.τXτ( 8 )
+    assert_equal 7, 7.π.τCτ
+    assert_equal 7, 7.π.τXτ( 8 )
     assert_equal 8, [7, 8].χCτ
     assert_equal 8, 7.τgτ( 8 )
     
-    assert_equal [0, 1, 6, 9], [:x.τl0τ, 0.τl1τ, Object.new.τl6τ, "a".τl9τ]
+    assert_equal [0, 1, 6, 9], [:x.π.τl0τ, 0.π.τl1τ, Object.new.π.τl6τ, "a".π.τl9τ]
     
-    assert_equal [:hello], :hello.τAτ
+    assert_equal [:hello], :hello.π.τAτ
     assert_equal [[:a, 1], [:b, 2]], ( {a: 1, b: 2}.τAτ )
     assert_equal [1, 2], [1, 2].τAτ
     
@@ -84,7 +82,7 @@ class PyperTest < ::Test::Unit::TestCase
     assert_equal [1, 4, 9], (1..3).τMomτ
     assert_equal [?a, nil, ?a, nil], (1..4).τmoMEτ( 2, 1 ).τmTτ( ?a, nil )
     assert_equal ["a", nil, "a", nil], (1..4).τmoMETτ( 2, 1, ?a, nil )
-    assert_equal [nil, "b", "b", nil], nil.τgmETτ( [0, 1, 1, 0], 1, ?b, nil )
+    assert_equal [nil, "b", "b", nil], nil.π.τgmETτ( [0, 1, 1, 0], 1, ?b, nil )
     assert_equal [["a", nil], [nil, "b"], ["a", "b"], [nil, nil]],
                  (1..4).τmoMETχ( 2, 1, ?a, nil ).πgmETπ( [0, 1, 1, 0], 1, ?b, nil ).χrZτ
     assert_equal true, [:a, :b, :c].τoiτ( :b )
