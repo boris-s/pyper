@@ -164,7 +164,15 @@ module Pyper::ControlCharacters
 
   # N:
 
-  # O: prefix character (ready to append literal)
+  # Map this register with object from the other register as the starting
+  # contents of the delta pipeline, and epsilon as the argument source.
+  # 
+  def O
+    r()
+    m()
+    g()
+    ε()
+  end
 
   # P: recursive piper method, begin
 
@@ -172,10 +180,10 @@ module Pyper::ControlCharacters
 
   def R # Reverse zip: Zip other and this register
     pipe_2_variable
-    start "#{rSUCC}.zip(#@a)"
+    start "#{successor_register}.zip(#@a)"
   end
 
-  # S:
+  # S
 
   # Ternary operator as binary method with the current pipeline as the receiver.
   # 

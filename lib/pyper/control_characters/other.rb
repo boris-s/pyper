@@ -7,22 +7,28 @@ module Pyper::ControlCharacters
     chain "join"
   end
 
-  # Unary +.
+  # Unary + operator.
   # 
   def ip
     unary_operator "+"
   end
 
-  # Unary -.
+  # Unary - operator.
   # 
   def im
     unary_operator "-"
   end
 
-  # Unary tilde.
+  # Unary tilde operator.
   # 
   def it
     unary_operator "~"
+  end
+
+  # Unary method +#index+.
+  # 
+  def ix
+    unary_method "index"
   end
 
   # Nullary method +#compact+.
@@ -35,6 +41,14 @@ module Pyper::ControlCharacters
   # 
   def iE
     unary_operator '!'
+  end
+
+  # Map with index
+  # 
+  def iX
+    next_block_will_be_binary
+    nullary_method "map"
+    nullary_method_with_block "with_index"
   end
 
   # Stands for Float( register ).
@@ -108,10 +122,12 @@ module Pyper::ControlCharacters
     else raise "'_' (close block) used when not in block" end
   end
   
-  def ᴍ # Map in the other pipe
-    exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
+  # Maps the other register to this register.
+  # 
+  def iM
+    pipe_2_variable
+    start "#{successor_register(@r)}"
     nullary_method_with_block "map"
-    exe "#@r, #{rSUCC} = #{rSUCC}, #@r"
   end
 
   def ᴘ # make a pair
