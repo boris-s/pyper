@@ -195,7 +195,11 @@ end # module Pyper
 class Object
   def π
     tap do |o|
-      o.singleton_class.class_exec { include Pyper }
+      begin
+        o.singleton_class
+      rescue TypeError
+        o.class
+      end.class_exec { include Pyper }
     end
   end
 end
