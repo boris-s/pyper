@@ -32,15 +32,14 @@ operations are applied in sequence, Pyper has 2 parallel pipelines.
 
 2. Greek letters τ, π, χ as method delimiters: Instead of 'c' and 'r' of
 car/cdr family, Pyper methods start and end with any of the characters
-'τ', 'π', 'χ' (small Greek tau, pi and chi). Choice of the character
-conveys specific meaning, which is best explained by case enumeration:
+`τ`, `π`, `χ` (tau, pi and chi). Their meaning is best explained by an example:
 
-τ...τ means single-pipe input and output,
-τ...π means single-pipe input, double-pipe output
-τ...χ means single-pipe input, double-pipe output with a swap
-π...τ means double-pipe input, single-pipe output
-. . .
-χ...χ means double-pipe input with a swap, and same for the output
+`τ...τ` means single-pipe input and output,
+`τ...π` means single-pipe input, double-pipe output
+`τ...χ` means single-pipe input, double-pipe output with a swap
+`π...τ` means double-pipe input, single-pipe output
+ . . .
+`χ...χ` means double-pipe input with a swap, and same for the output
 
 (Mnemonic for this is, that τ has one (vertical) pipe, π has two pipes,
 and χ looks like two pipes crossed)
@@ -76,21 +75,21 @@ means third:
 For another example, apart from 'd', meaning all except first, 'e' means
 all except first two, and 'f' means all except first three:
 ```ruby
-["See", "you", "later", "alligator"].τdτ = ["you", "later", "alligator"]
-["See", "you", "later", "alligator"].τeτ = ["later", "alligator"]
-["See", "you", "later", "alligator"].τfτ = ["alligator"]
+["See", "you", "later", "alligator"].τdτ #=> ["you", "later", "alligator"]
+["See", "you", "later", "alligator"].τeτ #=> ["later", "alligator"]
+["See", "you", "later", "alligator"].τfτ #=> ["alligator"]
 ```
 
 These command characters can be combined just like 'a' and 'd' letters
 in the traditional car/cdr family - just beware of the Pyper's postfix
 order:
 ```ruby
-["See", "you", "later", "alligator"].τddτ = ["later", "alligator"]
-["See", "you", "later", "alligator"].τdeτ = ["alligator"]
-["See", "you", "later", "alligator"].τdeaτ = "alligator"
-["See", "you", "later", "alligator"].τdeadτ = "lligator"
-["See", "you", "later", "alligator"].τdeafτ = "igator"
-["See", "you", "later", "alligator"].τdeafbτ = "g"
+["See", "you", "later", "alligator"].τddτ #=> ["later", "alligator"]
+["See", "you", "later", "alligator"].τdeτ #=> ["alligator"]
+["See", "you", "later", "alligator"].τdeaτ #=> "alligator"
+["See", "you", "later", "alligator"].τdeadτ #=> "lligator"
+["See", "you", "later", "alligator"].τdeafτ #=> "igator"
+["See", "you", "later", "alligator"].τdeafbτ #=> "g"
 ```
 
 Allready with these few command characters (a-c, d-f, u-w, x-z, plus
