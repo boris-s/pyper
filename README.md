@@ -34,12 +34,12 @@ operations are applied in sequence, Pyper has 2 parallel pipelines.
 car/cdr family, Pyper methods start and end with any of the characters
 `τ`, `π`, `χ` (tau, pi and chi). Their meaning is best explained by an example:
 
-`τ...τ` means single-pipe input and output,
-`τ...π` means single-pipe input, double-pipe output
-`τ...χ` means single-pipe input, double-pipe output with a swap
-`π...τ` means double-pipe input, single-pipe output
- . . .
-`χ...χ` means double-pipe input with a swap, and same for the output
+* `τ...τ` means single-pipe input and output,
+* `τ...π` means single-pipe input, double-pipe output
+* `τ...χ` means single-pipe input, double-pipe output with a swap
+* `π...τ` means double-pipe input, single-pipe output
+* . . .
+* `χ...χ` means double-pipe input with a swap, and same for the output
 
 (Mnemonic for this is, that τ has one (vertical) pipe, π has two pipes,
 and χ looks like two pipes crossed)
