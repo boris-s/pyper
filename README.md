@@ -2,29 +2,18 @@
 
 Pyper is a wide extension of the Lispy car/cdr idea.
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'pyper'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install pyper
-
 ## Usage
 
-Everybody knows Lispy functions #car, #cdr, #caar, #cdar, #cadr, #cddr...
-When you `require 'pyper'` and `include Pyper`, you can try them by yourself:
+Everybody knows Lispy functions `#car`, `#cdr`, `#caar`, `#cdar`, `#cadr`, `#cddr`...
+With Pyper, you have them at the hand:
+```ruby
+require 'pyper'
 
 [1, 2, 3].car # will return the first element, 1
 [1, 2, 3].cdr # will return the remaining elements, [2, 3]
+```
 
-Similarly, #caar will return the first element of the first element, #cadr
+Similarly, `#caar` will return the first element of the first element, `#cadr`
 will return the first element of the remaining elements (that is, second
 element), #cddr will return the list of [3rd, 4th, ... ] elements, etc.
 
@@ -36,7 +25,7 @@ caaaaar, ..., cadaadr, ...
 
 In effect, such character sequences form an APL-like language consisting of
 one-character operators 'a' and 'd', whose combination determines the overall
-operation. Pyper adds a few modifications and widely extends the idea:
+operation. Pyper adds a few modifications and extends the idea:
 
 1. Twin-barrel piping: Instead of just one pipeline, in which the
 operations are applied in sequence, Pyper has 2 parallel pipelines.
@@ -78,27 +67,31 @@ and 'd', is greatly extended.
 
 For example, apart from 'a', mening first, 'b' means second, and 'c'
 means third:
-
+```ruby
 ["See", "you", "later", "alligator"].τaτ    #=>    "See"
 ["See", "you", "later", "alligator"].τbτ    #=>    "you"
 ["See", "you", "later", "alligator"].τcτ    #=>    "later"
+```
 
 For another example, apart from 'd', meaning all except first, 'e' means
 all except first two, and 'f' means all except first three:
+```ruby
 ["See", "you", "later", "alligator"].τdτ = ["you", "later", "alligator"]
 ["See", "you", "later", "alligator"].τeτ = ["later", "alligator"]
 ["See", "you", "later", "alligator"].τfτ = ["alligator"]
+```
 
 These command characters can be combined just like 'a' and 'd' letters
 in the traditional car/cdr family - just beware of the Pyper's postfix
 order:
-
+```ruby
 ["See", "you", "later", "alligator"].τddτ = ["later", "alligator"]
 ["See", "you", "later", "alligator"].τdeτ = ["alligator"]
 ["See", "you", "later", "alligator"].τdeaτ = "alligator"
 ["See", "you", "later", "alligator"].τdeadτ = "lligator"
 ["See", "you", "later", "alligator"].τdeafτ = "igator"
 ["See", "you", "later", "alligator"].τdeafbτ = "g"
+```
 
 Allready with these few command characters (a-c, d-f, u-w, x-z, plus
 numbers 0-4 and 5-9), one can compose intelligent car/cdr-like methods.
@@ -116,14 +109,5 @@ as their arity requires.
 
 So much for the main concepts. As for the character meanings, those are
 defined as PostfixMachine methods of the same name (the name consists of
-1 or 2 characters). At the moment, it is necessary to read the
-PostfixMachine code as their documentation.
-
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1 or 2 characters). At the moment, it is necessary to read the code for
+their documentation.
