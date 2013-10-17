@@ -32,7 +32,8 @@ operations are applied in sequence, Pyper has 2 parallel pipelines.
 
 2. Greek letters τ, π, χ as method delimiters: Instead of 'c' and 'r' of
 car/cdr family, Pyper methods start and end with any of the characters
-`τ`, `π`, `χ` (tau, pi and chi). Their meaning is best explained by an example:
+`τ`, `π`, `χ` (_tau_, _pi_ and _chi_). Their meaning is best explained by
+examples:
 
 * `τ...τ` means single-pipe input and output,
 * `τ...π` means single-pipe input, double-pipe output
@@ -41,17 +42,14 @@ car/cdr family, Pyper methods start and end with any of the characters
 * . . .
 * `χ...χ` means double-pipe input with a swap, and same for the output
 
-(Mnemonic for this is, that τ has one (vertical) pipe, π has two pipes,
-and χ looks like two pipes crossed)
-
-As for the meaning, single-pipe input means, that a single object (the
-message receiver) is fed to the pipeline. Double-pipe input means, that
-the receiver is assumed to respond to methods #size and #[], its size is
-2, and this being fulfilled, pipeline 0 and 1 are initialized
-respectively with the first and second element of the receiver as per
-method #[]. Double-pipe input with swap is the same, but the two
-elements of the receiver are swapped: pipeline 1 receives the first,
-pipeline 0 the second.
+Mnemonic for this is, that τ looks like a gutter (has one vertical pipe),
+π looks like a twin gutter (two pipes) and χ looks like two pipes crossed.
+Single-pipe input means, that a single object (the receiver) is fed to the
+pipeline 0, while pipeline 1 receives its copy. Double-pipe input means,
+that the receiver should respond to #size and #[], and its size should be 2.
+Pipelines 0 and 1 are then initialized respectively with the first and
+the second element (obtained by #[]). Double-pipe input with swap is the
+same, but the two elements are swapped.
 
 3. Postfix order of commands: While traditional car/cdr family of
 methods applies the letters in the prefix order (from right to left),
