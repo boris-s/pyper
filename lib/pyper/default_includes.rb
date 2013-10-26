@@ -20,6 +20,12 @@ module Enumerable
   include Pyper
 end
 
+# Pyper is by default included in Enumerable.
+# 
+class Enumerator
+  include Pyper
+end
+
 # Pyper is by default included in Array.
 # 
 class Array
